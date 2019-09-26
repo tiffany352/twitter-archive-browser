@@ -2,19 +2,43 @@
   "name": "twitter-archive-browser",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "name": "Tiffany Bennett",
+    "email": "tiffnixen@gmail.com",
+    "url": "https://tiffnix.com"
+  },
+  "build": {
+    "appId": "com.tiffnix.twitter-archive-browser",
+    "productName": "Twitter Archive Browser",
+    "copyright": "Copyright © 2019 Tiffany Bennett",
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  },
   "dependencies": {
     "electron-is-dev": "^1.1.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-scripts": "3.1.2"
   },
+  "homepage": "./",
   "main": "public/electron.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "rescripts start",
+    "build": "rescripts build",
+    "test": "rescripts test",
     "eject": "react-scripts eject",
-    "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\""
+    "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "postinstall": "electorn-builder install-app-deps",
+    "preelectron-pack": "npm run-script build",
+    "electron-pack": "electron-builder build -wl"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -32,9 +56,12 @@
     ]
   },
   "devDependencies": {
+    "@rescripts/cli": "0.0.12",
+    "@rescripts/rescript-env": "0.0.10",
     "concurrently": "^4.1.2",
     "electron": "^6.0.10",
     "electron-builder": "^21.2.0",
+    "typescript": "^3.6.3",
     "wait-on": "^3.3.0"
   }
 }

@@ -1,26 +1,47 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import './App.css'
+const electron = window.require('electron')
+const { dialog } = electron.remote
+const fs = electron.remote.require('fs')
 
-function App() {
+function parseGarbageFile(data) {
+  const string = new TextDecoder('utf-8').decode(data)
+
+  const pattern = /^[^=]+ = (.*)$/ms
+  const rest = pattern.exec(string)[1]
+  const decoded = JSON.parse(rest)
+
+  return decoded
+}
+
+function openFile() {
+  dialog.showOpenDialog({
+    properties: ['openFile', 'openDirectory'],
+  }, (path) => {
+    console.log("archive opened", path)
+    const file = path + "/profile.js"
+
+    fs.readFile(file, (err, rawData) => {
+      if (err) throw err
+
+      const data = parseGarbageFile(rawData)
+      console.log("data", data)
+    })
+  })
+}
+
+export default function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Drag your archive zip or folder here to open it.
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <hr />
+        <p>
+          Or, you can <button onClick={openFile}>open a file</button>
+        </p>
       </header>
     </div>
-  );
+  )
 }
-
-export default App;
