@@ -2,14 +2,16 @@
   background-color: transparent;
   border: none;
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: none;
   display: inline;
   margin: 0;
   padding: 0;
   color: #ccc;
+  outline: none !important;
+  font-size: unset;
 }
 
 .link-button:hover,
 .link-button:focus {
-  text-decoration: none;
+  text-decoration: underline;
 }

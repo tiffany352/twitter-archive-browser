@@ -1,0 +1,80 @@
+.Session-header {
+  grid-area: header;
+  background: rgb(13, 21, 29);
+  height: 36px;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  padding: 0.25em 1em;
+}
+
+.Session-header-spacer {
+  flex-grow: 1;
+}
+
+.Session-header-item {
+  margin-right: .5em;
+  display: flex;
+  align-items: center;
+  font-size: 1.1em;
+  color: #eee;
+}
+
+.Session-header > button {
+  background: none;
+  border: none;
+  font-weight: 500;
+  padding: 0 0.75em;
+  outline: none !important;
+}
+
+.Session-header > button:hover {
+  background: rgb(48, 75, 102);
+  border-radius: 10px;
+}
+
+.Session-header > button:active {
+  background: rgb(77, 121, 165);
+  border-radius: 10px;
+}
+
+.Session-header > input {
+  border-radius: 36px;
+  border: none;
+  background: rgb(33, 56, 78);
+  outline: none !important;
+  padding: 0 1em;
+  color: rgb(216, 216, 216);
+}
+
+.Session-header > input:focus {
+  border: 1.5px solid rgb(77, 121, 165);
+  background: none;
+}
+
+.Session-sidebar {
+  grid-area: sidebar;
+}
+
+.Session-content {
+  grid-area: content;
+  max-width: 700px;
+}
+
+.Session-container {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-areas:
+    "header"
+    "sidebar"
+    "content";
+}
+
+@media (min-width: 700px) {
+  .Session-container {
+    grid-template-columns: 1fr 4fr;
+    grid-template-areas: 
+      "header  header"
+      "sidebar content";
+   }
+}
