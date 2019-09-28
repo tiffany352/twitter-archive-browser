@@ -76,6 +76,11 @@ export default function Session(props) {
         >
           <div className="Session-contentInner">
             {tweets.map((tweet, index) => <Tweet key={index} data={tweet} />)}
+            {tweets.length === 0 && (
+              <span className="Session-contentEmpty">
+                Nothing here :(
+              </span>
+            )}
           </div>
         </InfiniteScroll>
       </article>
