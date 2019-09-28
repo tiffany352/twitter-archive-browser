@@ -6,6 +6,11 @@ export default function(state = null, action) {
       }
     case 'sessionClose':
       return null
+    case 'sessionSetSearch':
+      return {
+        ...state,
+        search: action.search
+      }
     default:
       return state
   }

@@ -1,14 +1,37 @@
 import React from 'react'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import Tweet from './Tweet'
 import './Session.css'
 
 export default function Session(props) {
   const session = useSelector((state) => state.session)
+  const dispatch = useDispatch()
 
-  const tweets = session.tweet.slice(0, 100)
+  let tweets
+  if (session.search) {
+    tweets = []
+    const needle = session.search.toLowerCase()
+    for (let i = 0; i < session.tweet.length; i++) {
+      const tweet = session.tweet[i]
+      if (tweet.full_text.toLowerCase().includes(needle)) {
+        tweets.push(tweet)
+      }
+      if (tweets.length >= 100) {
+        break
+      }
+    }
+  }
+  else {
+    tweets = session.tweet.slice(0, 100)
+  }
 
-  console.log(session.account)
+  const handleChange = (event) => {
+    dispatch({
+      type: 'sessionSetSearch',
+      search: event.target.value
+    })
+  }
+
   return (
     <div className="Session-container">
       <header className="Session-header">
@@ -19,7 +42,13 @@ export default function Session(props) {
         <button className="Session-header-item">Messages</button>
         <button className="Session-header-item">Likes</button>
         <div className="Session-header-spacer"></div>
-        <input type="search" className="Session-header-item" placeholder="Search" />
+        <input
+          type="search"
+          className="Session-header-item"
+          placeholder="Search"
+          value={session.search || ''}
+          onChange={handleChange}
+        />
       </header>
       <aside className="Session-sidebar">
         2019
