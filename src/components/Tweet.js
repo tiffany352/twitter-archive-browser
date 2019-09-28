@@ -12,6 +12,16 @@ function Media(props) {
       </div>
     )
   }
+  else if (data.type === 'video') {
+    return (
+      <div className="Tweet-media">
+        <img alt="" src={data.media_url_https} />
+        <div className="Tweet-videoOverlay">
+          <span>Video</span>
+        </div>
+      </div>
+    )
+  }
   else {
     return (
       <p>Unknown media attachment.</p>
