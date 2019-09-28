@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import InfiniteScroll from 'react-infinite-scroller'
 import Tweet from './Tweet'
 import './Session.css'
 
 export default function Session(props) {
+  const [count, setCount] = useState(30)
   const session = useSelector((state) => state.session)
   const dispatch = useDispatch()
 
   let tweets
+  let hasMore = false
   if (session.search) {
     tweets = []
     const needle = session.search.toLowerCase()
@@ -16,13 +19,19 @@ export default function Session(props) {
       if (tweet.full_text.toLowerCase().includes(needle)) {
         tweets.push(tweet)
       }
-      if (tweets.length >= 100) {
+      if (tweets.length >= count) {
+        hasMore = true
         break
       }
     }
   }
   else {
-    tweets = session.tweet.slice(0, 100)
+    tweets = session.tweet.slice(0, count)
+    hasMore = count < session.tweet.length
+  }
+
+  const loadMore = () => {
+    setCount(count + 20)
   }
 
   const handleChange = (event) => {
@@ -58,7 +67,17 @@ export default function Session(props) {
         2015
       </aside>
       <article className="Session-content">
-        {tweets.map((tweet, index) => <Tweet key={index} data={tweet} />)}
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={loadMore}
+          hasMore={hasMore}
+          loader={<span key="loader">Loading...</span>}
+          useWindow={false}
+        >
+          <div className="Session-contentInner">
+            {tweets.map((tweet, index) => <Tweet key={index} data={tweet} />)}
+          </div>
+        </InfiniteScroll>
       </article>
     </div>
   )

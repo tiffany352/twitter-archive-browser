@@ -71,5 +71,14 @@ export default async function parseArchive(path) {
     console.log(entry)
     map[entry.name] = (entry.data[0] && entry.data[0][entry.name]) || entry.data
   }
+
+  for (let tweet of map.tweet) {
+    tweet.created_date = new Date(tweet.created_at)
+  }
+
+  map.tweet.sort((a, b) => {
+    return b.created_date - a.created_date
+  })
+
   return map
 }

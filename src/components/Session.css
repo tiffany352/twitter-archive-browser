@@ -58,12 +58,18 @@
 
 .Session-content {
   grid-area: content;
+  overflow-y: auto;
+}
+
+.Session-contentInner {
   max-width: 700px;
+  padding: 20px;
 }
 
 .Session-container {
+  width: 100vw;
+  height: 100vh;
   display: grid;
-  grid-gap: 20px;
   grid-template-areas:
     "header"
     "sidebar"
