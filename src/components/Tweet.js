@@ -154,6 +154,18 @@ export default function Tweet(props) {
     }
   }
 
+  if (data.entities.hashtags) {
+    for (let i = 0; i < data.entities.hashtags.length; i++) {
+      const hashtag = data.entities.hashtags[i]
+      const start = parseInt(hashtag.indices[0])
+      const end = parseInt(hashtag.indices[1])
+      setSpan(start, end, 'link', {
+        display: '#' + hashtag.text,
+        href: 'https://twitter.com/hashtag/' + hashtag.text,
+      })
+    }
+  }
+
   function decodeHTMLEntities(text) {
     var entities = [
         ['amp', '&'],
