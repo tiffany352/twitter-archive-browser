@@ -1,24 +1,34 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import ExternalLink from './ExternalLink'
 import './Tweet.css'
 
 function Media(props) {
+  const [ mediaUrl, setMediaUrl ] = useState(null)
+  const mediaProvider = useSelector((state) => state.session.tweet_media)
   const data = props.data
+
   if (data.type === 'photo') {
+    mediaProvider.getMediaUrl(props.tweetId, data.media_url_https).then((mediaUrl) => {
+      setMediaUrl(mediaUrl)
+    })
+
     return (
       <div className="Tweet-media">
-        <img alt="" src={data.media_url_https} />
+        <img alt="" src={mediaUrl} />
       </div>
     )
   }
   else if (data.type === 'video') {
+    mediaProvider.getVideoUrl(props.tweetId, data.video_info.variants[3].url).then((mediaUrl) => {
+      setMediaUrl(mediaUrl)
+    })
+
     return (
       <div className="Tweet-media">
-        <img alt="" src={data.media_url_https} />
-        <div className="Tweet-videoOverlay">
-          <span>Video</span>
-        </div>
+        <video controls loop src={mediaUrl}>
+          Video
+        </video>
       </div>
     )
   }
@@ -55,7 +65,7 @@ export default function Tweet(props) {
   var media = [];
   if (data.extended_entities) {
     media = data.extended_entities.media.map((media, index) => {
-      return <Media data={media} key={index} />;
+      return <Media tweetId={data.id_str} data={media} key={index} />;
     });
   }
 
