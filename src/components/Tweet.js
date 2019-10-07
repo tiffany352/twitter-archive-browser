@@ -154,6 +154,25 @@ export default function Tweet(props) {
     }
   }
 
+  function decodeHTMLEntities(text) {
+    var entities = [
+        ['amp', '&'],
+        ['apos', '\''],
+        ['#x27', '\''],
+        ['#x2F', '/'],
+        ['#39', '\''],
+        ['#47', '/'],
+        ['lt', '<'],
+        ['gt', '>'],
+        ['quot', '"']
+    ]
+
+    for (var i = 0; i < entities.length; ++i) 
+        text = text.replace(new RegExp('&'+entities[i][0]+';', 'g'), entities[i][1])
+
+    return text
+  }
+
   const formattedText = []
   for (let i = 0; i < spans.length; i++) {
     const span = spans[i]
@@ -161,7 +180,7 @@ export default function Tweet(props) {
     const text = data.full_text.slice(span.start, next.start)
     switch (span.style) {
       case 'normal':
-        formattedText.push(text)
+        formattedText.push(decodeHTMLEntities(text))
         break
       case 'link':
         formattedText.push(
@@ -199,7 +218,7 @@ export default function Tweet(props) {
           {date.toLocaleString()}
         </ExternalLink>
       </header>
-      <p>{formattedText}</p>
+      <p className="Tweet-body">{formattedText}</p>
       {media.length > 0 && (
         <div className="Tweet-mediaSection">{media}</div>
       )}

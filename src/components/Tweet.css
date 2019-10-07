@@ -6,6 +6,10 @@
   flex-direction: column;
 }
 
+.Tweet-body {
+  white-space: pre-line;
+}
+
 .Tweet-icon {
   width: 1em;
   height: 1em;
