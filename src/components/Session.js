@@ -40,19 +40,10 @@ export default function Session(props) {
           onChange={handleChange}
         />
       </header>
-      <aside className="Session-sidebar">
-        2019
-        2018
-        2017
-        2016
-        2015
-      </aside>
-      <article className="Session-content">
-        {{
-          tweets: () => <TweetsPage />,
-          messages: () => <MessagesPage />,
-        }[session.page]()}
-      </article>
+      {{
+        tweets: () => <TweetsPage />,
+        messages: () => <MessagesPage />,
+      }[session.page]()}
     </div>
   )
 }

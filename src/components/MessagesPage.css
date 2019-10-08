@@ -7,10 +7,16 @@
   background: none;
   color: #fff;
   border: 1px rgb(56, 68, 77) solid;
-  margin-top: -1px;
-  padding: 1em;
+  margin-bottom: -1px;
+  padding: 1.5em;
   text-align: left;
   outline: none !important;
+  display: flex;
+  justify-content: space-between;
+}
+
+.MessagesPage-conversationListDate {
+  color: rgb(207, 207, 207);
 }
 
 .MessagesPage-conversationList > button:hover {

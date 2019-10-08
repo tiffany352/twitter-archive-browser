@@ -7,17 +7,21 @@ function ConversationList(props) {
   const conversations = useSelector((state) => state.session['direct-message'])
 
   return (
-    <div className="Session-contentInner">
-      <div className="MessagesPage-conversationList">
-        {conversations.map((convo, index) => (
-          <button
-            key={index}
-            onClick={() => props.setCurrentConvo(convo.dmConversation.conversationId)}
-          >
-            {convo.dmConversation.conversationId}
-          </button>
-        ))}
-      </div>
+    <div className="MessagesPage-conversationList">
+      {conversations.map((convo, index) => (
+        <button
+          className="MessagesPage-conversationListItem"
+          key={index}
+          onClick={() => props.setCurrentConvo(convo.dmConversation.conversationId)}
+        >
+          <div className="MessagesPage-conversationListItemName">
+            Unknown sender {convo.dmConversation.conversationId}
+          </div>
+          <div className="MessagesPage-conversationListItemDate">
+            {new Date(convo.dmConversation.messages[0].messageCreate.createdAt).toLocaleDateString()}
+          </div>
+        </button>
+      ))}
     </div>
   )
 }
@@ -76,9 +80,16 @@ function ConversationView(props) {
 export default function MessagesPage(props) {
   const [ currentConvo, setCurrentConvo ] = useState(null)
 
-  if (currentConvo) {
-    return <ConversationView convoId={currentConvo} />
-  }
-
-  return <ConversationList setCurrentConvo={setCurrentConvo} />
+  return (
+    <>
+      <aside className="Session-sidebar">
+        <ConversationList setCurrentConvo={setCurrentConvo} />
+      </aside>
+      <article className="Session-content">
+        {currentConvo && (
+          <ConversationView convoId={currentConvo} />
+        )}
+      </article>
+    </>
+  )
 }

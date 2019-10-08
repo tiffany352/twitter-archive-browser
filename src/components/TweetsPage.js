@@ -33,21 +33,32 @@ export default function TweetsPage(props) {
   }
 
   return (
-    <InfiniteScroll
-      pageStart={0}
-      loadMore={loadMore}
-      hasMore={hasMore}
-      loader={<span key="loader">Loading...</span>}
-      useWindow={false}
-    >
-      <div className="Session-contentInner">
-        {tweets.map((tweet, index) => <Tweet key={index} data={tweet} />)}
-        {tweets.length === 0 && (
-          <span className="Session-contentEmpty">
-            Nothing here :(
-          </span>
-        )}
-      </div>
-    </InfiniteScroll>
+    <>
+      <aside className="Session-sidebar">
+        2019
+        2018
+        2017
+        2016
+        2015
+      </aside>
+      <article className="Session-content">
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={loadMore}
+          hasMore={hasMore}
+          loader={<span key="loader">Loading...</span>}
+          useWindow={false}
+        >
+          <div className="Session-contentInner">
+            {tweets.map((tweet, index) => <Tweet key={index} data={tweet} />)}
+            {tweets.length === 0 && (
+              <span className="Session-contentEmpty">
+                Nothing here :(
+              </span>
+            )}
+          </div>
+        </InfiniteScroll>
+      </article>
+    </>
   )
 }
