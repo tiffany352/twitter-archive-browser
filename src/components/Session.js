@@ -1,43 +1,24 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import InfiniteScroll from 'react-infinite-scroller'
-import Tweet from './Tweet'
 import './Session.css'
+import TweetsPage from './TweetsPage'
+import MessagesPage from './MessagesPage'
 
 export default function Session(props) {
-  const [count, setCount] = useState(30)
   const session = useSelector((state) => state.session)
   const dispatch = useDispatch()
-
-  let tweets
-  let hasMore = false
-  if (session.search) {
-    tweets = []
-    const needle = session.search.toLowerCase()
-    for (let i = 0; i < session.tweet.length; i++) {
-      const tweet = session.tweet[i]
-      if (tweet.full_text.toLowerCase().includes(needle)) {
-        tweets.push(tweet)
-      }
-      if (tweets.length >= count) {
-        hasMore = true
-        break
-      }
-    }
-  }
-  else {
-    tweets = session.tweet.slice(0, count)
-    hasMore = count < session.tweet.length
-  }
-
-  const loadMore = () => {
-    setCount(count + 20)
-  }
 
   const handleChange = (event) => {
     dispatch({
       type: 'sessionSetSearch',
       search: event.target.value
+    })
+  }
+
+  const setPage = (page) => {
+    dispatch({
+      type: 'sessionSetPage',
+      page
     })
   }
 
@@ -47,8 +28,8 @@ export default function Session(props) {
         <div className="Session-header-item">
           {session.account.username}'s Archive
         </div>
-        <button className="Session-header-item">Tweets</button>
-        <button className="Session-header-item">Messages</button>
+        <button className="Session-header-item" onClick={() => setPage('tweets')}>Tweets</button>
+        <button className="Session-header-item" onClick={() => setPage('messages')}>Messages</button>
         <button className="Session-header-item">Likes</button>
         <div className="Session-header-spacer"></div>
         <input
@@ -67,22 +48,10 @@ export default function Session(props) {
         2015
       </aside>
       <article className="Session-content">
-        <InfiniteScroll
-          pageStart={0}
-          loadMore={loadMore}
-          hasMore={hasMore}
-          loader={<span key="loader">Loading...</span>}
-          useWindow={false}
-        >
-          <div className="Session-contentInner">
-            {tweets.map((tweet, index) => <Tweet key={index} data={tweet} />)}
-            {tweets.length === 0 && (
-              <span className="Session-contentEmpty">
-                Nothing here :(
-              </span>
-            )}
-          </div>
-        </InfiniteScroll>
+        {{
+          tweets: () => <TweetsPage />,
+          messages: () => <MessagesPage />,
+        }[session.page]()}
       </article>
     </div>
   )

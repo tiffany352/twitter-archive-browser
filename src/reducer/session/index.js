@@ -2,7 +2,9 @@ export default function(state = null, action) {
   switch (action.type) {
     case 'sessionCreate':
       return {
-        ...action.archive
+        ...action.archive,
+        search: '',
+        page: 'tweets',
       }
     case 'sessionClose':
       return null
@@ -10,6 +12,11 @@ export default function(state = null, action) {
       return {
         ...state,
         search: action.search
+      }
+    case 'sessionSetPage':
+      return {
+        ...state,
+        page: action.page
       }
     default:
       return state

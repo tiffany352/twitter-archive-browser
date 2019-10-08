@@ -119,6 +119,7 @@ export default async function parseArchive(path) {
     'contact',
     'direct-message',
     'direct-message-headers',
+    'direct-message-group',
     'email-address-change',
     'follower',
     'following',
