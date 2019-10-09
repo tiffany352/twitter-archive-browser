@@ -10,7 +10,7 @@ export default function ExternalLink(props) {
   }
 
   return (
-    <button className="link-button" onClick={click}>
+    <button className="link-button" onClick={click} data-href={href}>
       {props.children}
     </button>
   )
