@@ -65,7 +65,7 @@
   color: #ccc;
 }
 
-.Tweet-displayWrapper > button:hover {
+.Tweet-displayWrapper > .link-button:hover {
   text-decoration: none;
 }
 
@@ -75,8 +75,17 @@
   font-weight: 500;
 }
 
-.Tweet-displayWrapper > button:hover > .Tweet-displayName {
+.Tweet-displayHandle {
+  color: rgb(136, 153, 166);
+}
+
+.Tweet-displayWrapper > .link-button:hover > .Tweet-displayName {
   text-decoration: underline;
+}
+
+.Tweet-date > .link-button {
+  color: rgb(136, 153, 166);
+  text-decoration-color: rgb(136, 153, 166) !important;
 }
 
 .Tweet-footer {

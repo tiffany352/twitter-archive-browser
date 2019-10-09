@@ -224,13 +224,15 @@ export default function Tweet(props) {
         <span className="Tweet-displayWrapper">
           <ExternalLink href={authorProfileUrl}>
             <span className="Tweet-displayName">{authorDisplayName}</span>
-            <span> @{authorUsername}</span>
+            <span className="Tweet-displayHandle"> @{authorUsername}</span>
           </ExternalLink>
         </span>
         <span> · </span>
-        <ExternalLink href={url}>
-          {date.toLocaleString()}
-        </ExternalLink>
+        <span className="Tweet-date">
+          <ExternalLink href={url}>
+            {date.toLocaleString()}
+          </ExternalLink>
+        </span>
       </header>
       <p className="Tweet-body">{formattedText}</p>
       {media.length > 0 && (
