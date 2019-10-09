@@ -2,24 +2,39 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import './MessagesPage.css'
 
+function ConversationListItem(props) {
+  const [ screenNames, accountId ] = useSelector((state) => [
+    state.session.screen_names,
+    state.session.account.accountId
+  ])
+  const convo = props.convo
+
+  const ids = convo.dmConversation.conversationId.split('-')
+  const other = ids.find((id) => id !== accountId)
+  const otherName = screenNames[other]
+
+  return (
+    <button
+      className="MessagesPage-conversationListItem"
+      onClick={() => props.setCurrentConvo(convo.dmConversation.conversationId)}
+    >
+      <div className="MessagesPage-conversationListItemName">
+        {otherName ? otherName : `Unknown sender (${other})`}
+      </div>
+      <div className="MessagesPage-conversationListItemDate">
+        {new Date(convo.dmConversation.messages[0].messageCreate.createdAt).toLocaleDateString()}
+      </div>
+    </button>
+  )
+}
+
 function ConversationList(props) {
-  const conversations = useSelector((state) => state.session['direct-message'])
+  const conversations = useSelector((state) => state.session['direct-message'] )
 
   return (
     <div className="MessagesPage-conversationList">
       {conversations.map((convo, index) => (
-        <button
-          className="MessagesPage-conversationListItem"
-          key={index}
-          onClick={() => props.setCurrentConvo(convo.dmConversation.conversationId)}
-        >
-          <div className="MessagesPage-conversationListItemName">
-            Unknown sender {convo.dmConversation.conversationId}
-          </div>
-          <div className="MessagesPage-conversationListItemDate">
-            {new Date(convo.dmConversation.messages[0].messageCreate.createdAt).toLocaleDateString()}
-          </div>
-        </button>
+        <ConversationListItem setCurrentConvo={props.setCurrentConvo} convo={convo} key={index} />
       ))}
     </div>
   )

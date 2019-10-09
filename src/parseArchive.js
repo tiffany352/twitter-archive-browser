@@ -163,5 +163,23 @@ export default async function parseArchive(path) {
 
   map.tweet_media = await loadMedia(path)
 
+  // Cross reference screen name data
+  const screenNames = {}
+
+  for (const tweet of map.tweet) {
+    if (tweet.in_reply_to_user_id && tweet.in_reply_to_screen_name) {
+      screenNames[tweet.in_reply_to_user_id] = tweet.in_reply_to_screen_name
+    }
+    if (tweet.entities.user_mentions) {
+      for (const mention of tweet.entities.user_mentions) {
+        if (mention.id_str && mention.screen_name) {
+          screenNames[mention.id_str] = mention.screen_name
+        }
+      }
+    }
+  }
+
+  map.screen_names = screenNames
+
   return map
 }
