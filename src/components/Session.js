@@ -29,6 +29,7 @@ export default function Session(props) {
           {session.account.username}'s Archive
         </div>
         <button className="Session-header-item" onClick={() => setPage('tweets')}>Tweets</button>
+        <button className="Session-header-item" onClick={() => setPage('tweetsAndReplies')}>Tweets & Replies</button>
         <button className="Session-header-item" onClick={() => setPage('messages')}>Messages</button>
         <button className="Session-header-item">Likes</button>
         <div className="Session-header-spacer"></div>
@@ -42,6 +43,7 @@ export default function Session(props) {
       </header>
       {{
         tweets: () => <TweetsPage />,
+        tweetsAndReplies: () => <TweetsPage includeReplies />,
         messages: () => <MessagesPage />,
       }[session.page]()}
     </div>

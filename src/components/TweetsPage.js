@@ -7,25 +7,20 @@ export default function TweetsPage(props) {
   const [count, setCount] = useState(30)
   const session = useSelector((state) => state.session)
 
-  let tweets
+  const tweets = []
+  const needle = session.search && session.search.toLowerCase()
   let hasMore = false
-  if (session.search) {
-    tweets = []
-    const needle = session.search.toLowerCase()
-    for (let i = 0; i < session.tweet.length; i++) {
-      const tweet = session.tweet[i]
-      if (tweet.full_text.toLowerCase().includes(needle)) {
+
+  for (const tweet of session.tweet) {
+    if (props.includeReplies || tweet.in_reply_to_user_id_str === undefined) {
+      if (!needle || tweet.full_text.toLowerCase().includes(needle)) {
         tweets.push(tweet)
       }
-      if (tweets.length >= count) {
-        hasMore = true
-        break
-      }
     }
-  }
-  else {
-    tweets = session.tweet.slice(0, count)
-    hasMore = count < session.tweet.length
+    if (tweets.length >= count) {
+      hasMore = true
+      break
+    }
   }
 
   const loadMore = () => {
