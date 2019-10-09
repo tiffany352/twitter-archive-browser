@@ -72,9 +72,11 @@ export default function Tweet(props) {
   const retweetRegex = /^RT @[^:]*:/
   const retweetMatches = data.full_text.match(retweetRegex)
   const isRetweet = retweetMatches != null
+  let authorId = account.accountId
   let authorUsername = account.username
   let authorDisplayName = account.accountDisplayName
   if (isRetweet) {
+    authorId = data.entities.user_mentions[0].id_str
     authorUsername = data.entities.user_mentions[0].screen_name
     authorDisplayName = data.entities.user_mentions[0].name
   }
@@ -121,7 +123,7 @@ export default function Tweet(props) {
     const mention = data.entities.user_mentions[i]
     const start = parseInt(mention.indices[0])
     const end = parseInt(mention.indices[1])
-    const url = "https://twitter.com/" + mention.screen_name
+    const url = "https://twitter.com/i/user/" + mention.id_str
     setSpan(start, end, 'link', { 
       display: '@' + mention.screen_name,
       href: url
@@ -209,7 +211,7 @@ export default function Tweet(props) {
     console.log('tweet', data)
   }
 
-  const authorProfileUrl = "https://twitter.com/" + authorUsername
+  const authorProfileUrl = "https://twitter.com/i/user/" + authorId
 
   const date = new Date(data.created_at)
 
