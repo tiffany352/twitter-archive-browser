@@ -32,6 +32,22 @@ function Media(props) {
       </div>
     )
   }
+  else if (data.type === 'animated_gif') {
+    mediaProvider.getGifUrl(props.tweetId, data.video_info.variants[0].url).then((mediaUrl) => {
+      setMediaUrl(mediaUrl)
+    })
+
+    return (
+      <div className="Tweet-media">
+        <div className="Tweet-gifOverlay">
+          GIF
+        </div>
+        <video autoPlay loop src={mediaUrl}>
+          Video
+        </video>
+      </div>
+    )
+  }
   else {
     return (
       <p>Unknown media attachment.</p>

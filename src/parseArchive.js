@@ -93,6 +93,27 @@ class MediaProvider {
 
     return 'data:' + mimeType + ';base64,' + contentsBase64
   }
+
+  async getGifUrl(tweetId, cdnUrl) {
+    // "https://video.twimg.com/tweet_video/{filename}.mp4"
+    const pattern = /^https:\/\/video\.twimg\.com\/tweet_video\/(.*)$/
+    const result = cdnUrl.match(pattern)
+    if (!result) {
+      console.log('failed to parse: ', cdnUrl)
+      return null
+    }
+    const [, cdnName ] = result
+
+    const fileName = tweetId + '-' + cdnName
+    const file = this.zipFile.file(fileName)
+    const contents = await file.async("binarystring")
+    const contentsBase64 = btoa(contents)
+    console.log('getGifUrl', {
+      tweetId, cdnUrl, fileName
+    })
+
+    return 'data:video/mp4;base64,' + contentsBase64
+  }
 }
 
 async function loadMedia(root) {
