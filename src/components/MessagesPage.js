@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import InfiniteScroll from 'react-infinite-scroller'
 import './MessagesPage.css'
 
 function ConversationList(props) {
@@ -64,12 +63,12 @@ function ConversationView(props) {
           )
           lastMessage = date
           return (
-            <>
+            <React.Fragment key={index}>
               {!sameDay && (
                 <hr className="MessagesPage-divider" data-display={date.toLocaleDateString()} />
               )}
-              <ConversationMessage message={message} key={index} />
-            </>
+              <ConversationMessage message={message} />
+            </React.Fragment>
           )
         })}
       </div>
