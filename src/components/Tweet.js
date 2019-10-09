@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import ExternalLink from './ExternalLink'
 import './Tweet.css'
+import Segmenter from '../Segmenter'
 
 function Media(props) {
   const [ mediaUrl, setMediaUrl ] = useState(null)
@@ -97,89 +98,58 @@ export default function Tweet(props) {
     authorDisplayName = data.entities.user_mentions[0].name
   }
 
-  const spans = [
-    {
-      start: 0,
-      style: 'normal'
-    }
-  ]
+  const segmenter = new Segmenter(data.full_text.length, {
+    style: 'normal',
+  })
 
-  const setSpan = (start, end, style, data = {}) => {
-    let startIndex;
-    let endIndex = 1;
-    for (let i = 0; i < spans.length; i++) {
-      const span = spans[i]
-      if (!startIndex && span.start >= start) {
-        startIndex = i
-      }
-      if (span.start < end) {
-        endIndex = i
-      }
-    }
-
-    if (!startIndex) {
-      spans.push({
-        start, style,
-        ...data
-      })
-      spans.push({
-        start: end,
-        style: 'normal'
-      })
-    }
-    else {
-      spans.splice(startIndex, endIndex - startIndex, { start, style, ...data })
-      if (spans.length > startIndex) {
-        spans[startIndex + 1].start = end
-      }
-    }
-  }
-
-  for (let i = 0; i < data.entities.user_mentions.length; i++) {
-    const mention = data.entities.user_mentions[i]
-    const start = parseInt(mention.indices[0])
-    const end = parseInt(mention.indices[1])
-    const url = "https://twitter.com/i/user/" + mention.id_str
-    setSpan(start, end, 'link', { 
-      display: '@' + mention.screen_name,
+  for (const entity of data.entities.user_mentions) {
+    const start = parseInt(entity.indices[0])
+    const end = parseInt(entity.indices[1]) - 1
+    const url = "https://twitter.com/i/user/" + entity.id_str
+    segmenter.setSpan(start, end, {
+      style: 'link', 
+      display: '@' + entity.screen_name,
       href: url
     })
   }
 
   // Do after mentions parsing
   if (isRetweet) {
-    setSpan(0, retweetMatches[0].length, 'hide')
+    segmenter.setSpan(0, retweetMatches[0].length, {
+      style: 'hide',
+    })
   }
 
   if (data.entities.media) {
-    for (let i = 0; i < data.entities.media.length; i++) {
-      const media = data.entities.media[i]
-      const start = parseInt(media.indices[0])
-      const end = parseInt(media.indices[1])
-      setSpan(start, end, 'hide')
+    for (const entity of data.entities.media) {
+      const start = parseInt(entity.indices[0])
+      const end = parseInt(entity.indices[1]) - 1
+      segmenter.setSpan(start, end, {
+        style: 'hide',
+      })
     }
   }
 
   if (data.entities.urls) {
-    for (let i = 0; i < data.entities.urls.length; i++) {
-      const url = data.entities.urls[i]
-      const start = parseInt(url.indices[0])
-      const end = parseInt(url.indices[1])
-      setSpan(start, end, 'link', {
-        display: url.display_url,
-        href: url.expanded_url,
+    for (const entity of data.entities.urls) {
+      const start = parseInt(entity.indices[0])
+      const end = parseInt(entity.indices[1]) - 1
+      segmenter.setSpan(start, end, {
+        style: 'link',
+        display: entity.display_url,
+        href: entity.expanded_url,
       })
     }
   }
 
   if (data.entities.hashtags) {
-    for (let i = 0; i < data.entities.hashtags.length; i++) {
-      const hashtag = data.entities.hashtags[i]
-      const start = parseInt(hashtag.indices[0])
-      const end = parseInt(hashtag.indices[1])
-      setSpan(start, end, 'link', {
-        display: '#' + hashtag.text,
-        href: 'https://twitter.com/hashtag/' + hashtag.text,
+    for (const entity of data.entities.hashtags) {
+      const start = parseInt(entity.indices[0])
+      const end = parseInt(entity.indices[1]) - 1
+      segmenter.setSpan(start, end, {
+        style: 'link',
+        display: '#' + entity.text,
+        href: 'https://twitter.com/hashtag/' + entity.text,
       })
     }
   }
@@ -203,28 +173,29 @@ export default function Tweet(props) {
     return text
   }
 
-  const formattedText = []
-  for (let i = 0; i < spans.length; i++) {
-    const span = spans[i]
-    const next = spans[i + 1] || { start: parseInt(data.display_text_range[1]) }
-    const text = data.full_text.slice(span.start, next.start)
-    switch (span.style) {
+  const formattedText = segmenter.array.map((segment, index) => {
+    const text = data.full_text.slice(segment.start, segment.end + 1)
+    switch (segment.value.style) {
       case 'normal':
-        formattedText.push(decodeHTMLEntities(text))
-        break
-      case 'link':
-        formattedText.push(
-          <ExternalLink key={i} href={span.href}>{span.display}</ExternalLink>
+        return (
+          <span>
+            {decodeHTMLEntities(text)}
+          </span>
         )
-        break
+      case 'link':
+        return (
+          <ExternalLink key={index} href={segment.value.href}>{segment.value.display}</ExternalLink>
+        )
       case 'hide':
       default:
-        break
+        return null
     }
-  }
+  })
 
   const logContents = () => {
-    console.log('tweet', data)
+    console.log('tweet', {
+      data, segmenter
+    })
   }
 
   const authorProfileUrl = "https://twitter.com/i/user/" + authorId
