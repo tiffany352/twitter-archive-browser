@@ -6,6 +6,10 @@
   flex-direction: column;
 }
 
+.Tweet-inReplyTo {
+  color: rgb(136, 153, 166);
+}
+
 .Tweet-body {
   white-space: pre-line;
 }

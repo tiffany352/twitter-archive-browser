@@ -234,6 +234,14 @@ export default function Tweet(props) {
           </ExternalLink>
         </span>
       </header>
+      {data.in_reply_to_screen_name && (
+        <div className="Tweet-inReplyTo">
+          <span>Replying to </span>
+          <ExternalLink href={`https://twitter.com/i/user/${data.in_reply_to_user_id_str}`}>
+            @{data.in_reply_to_screen_name}
+          </ExternalLink>
+        </div>
+      )}
       <p className="Tweet-body">{formattedText}</p>
       {media.length > 0 && (
         <div className="Tweet-mediaSection">{media}</div>
