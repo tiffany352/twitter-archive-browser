@@ -18,6 +18,15 @@
     "mac": {
       "category": "public.app-category.utilities"
     },
+    "win": {
+      "target": ["nsis", "portable", "appx"]
+    },
+    "appx": {
+      "applicationId": "TwitterArchiveBrowser",
+      "identityName": "56828TiffanyBennett.TwitterArchiveBrowser",
+      "publisher": "CN=04522D8E-FC63-48F3-B67D-DFFDD2DA82F9",
+      "publisherDisplayName": "Tiffany Bennett"
+    },
     "files": [
       "build/**/*",
       "node_modules/**/*"
