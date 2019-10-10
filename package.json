@@ -1,6 +1,6 @@
 {
   "name": "twitter-archive-browser",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha2",
   "description": "A desktop app for browsing your Twitter archive.",
   "private": true,
   "author": {
@@ -69,7 +69,6 @@
     "concurrently": "^4.1.2",
     "electron": "^6.0.10",
     "electron-builder": "^21.2.0",
-    "electron-updater": "^4.1.2",
     "jszip": "^3.2.2",
     "react-infinite-scroller": "^1.2.4",
     "react-redux": "^7.1.1",
