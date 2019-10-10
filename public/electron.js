@@ -1,6 +1,7 @@
 const electron = require('electron')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
+const { autoUpdater } = require("electron-updater")
 
 const path = require('path')
 const isDev = require('electron-is-dev')
@@ -8,6 +9,8 @@ const isDev = require('electron-is-dev')
 let mainWindow
 
 function createWindow() {
+  autoUpdater.checkForUpdatesAndNotify()
+
   mainWindow = new BrowserWindow({
     width: 900, height: 680,
     backgroundColor: '#15202b',

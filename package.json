@@ -1,6 +1,7 @@
 {
   "name": "twitter-archive-browser",
   "version": "0.1.0",
+  "description": "A desktop app for browsing your Twitter archive.",
   "private": true,
   "author": {
     "name": "Tiffany Bennett",
@@ -8,10 +9,12 @@
     "url": "https://tiffnix.com"
   },
   "license": "MPLv2",
+  "repository": "github:tiffany352/twitter-archive-browser",
   "build": {
     "appId": "com.tiffnix.twitter-archive-browser",
     "productName": "Twitter Archive Browser",
     "copyright": "Copyright © 2019 Tiffany Bennett",
+    "publish": "github",
     "mac": {
       "category": "public.app-category.utilities"
     },
@@ -37,9 +40,10 @@
     "test": "rescripts test",
     "eject": "react-scripts eject",
     "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
-    "postinstall": "electorn-builder install-app-deps",
+    "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "npm run-script build",
-    "electron-pack": "electron-builder build -wl"
+    "electron-pack": "electron-builder build -wl",
+    "publish": "electron-builder build -wl -p always"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -63,6 +67,7 @@
     "concurrently": "^4.1.2",
     "electron": "^6.0.10",
     "electron-builder": "^21.2.0",
+    "electron-updater": "^4.1.2",
     "jszip": "^3.2.2",
     "react-infinite-scroller": "^1.2.4",
     "react-redux": "^7.1.1",
