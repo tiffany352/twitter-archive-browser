@@ -26,12 +26,6 @@
       "buildResources": "assets"
     }
   },
-  "dependencies": {
-    "electron-is-dev": "^1.1.0",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "react-scripts": "3.1.2"
-  },
   "homepage": "./",
   "main": "public/electron.js",
   "scripts": {
@@ -43,6 +37,7 @@
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "npm run-script build",
     "electron-pack": "electron-builder build -wl",
+    "electron-local-pack": "electron-builder build",
     "publish": "electron-builder build -wl -p always"
   },
   "eslintConfig": {
@@ -59,6 +54,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "dependencies": {
+    "electron-is-dev": "^1.1.0",
+    "electron-updater": "^4.1.2",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "react-scripts": "3.1.2"
   },
   "devDependencies": {
     "@rescripts/cli": "0.0.12",
