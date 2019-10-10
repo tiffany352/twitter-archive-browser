@@ -1,29 +1,21 @@
-.link-button {
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
+a {
   text-decoration: none;
-  display: inline;
-  margin: 0;
-  padding: 0;
   color: rgb(27, 149, 224);
-  outline: none !important;
-  font-size: unset;
 }
 
-.link-button:hover,
-.link-button:focus {
+a:hover,
+a:focus {
   text-decoration: underline;
 }
 
 /* Shows the URL */
-.link-button:hover:after,
-.link-button:focus:after {
+a:hover::after,
+a:focus::after {
   position: absolute;
   z-index: 10000;
   left: 0;
   bottom: 0;
-  content: attr(data-href);
+  content: attr(href);
   color: rgb(68, 68, 68);
   background: rgb(249, 249, 250);
   border: 1px solid rgb(227, 227, 227);

@@ -178,7 +178,7 @@ export default function Tweet(props) {
     switch (segment.value.style) {
       case 'normal':
         return (
-          <span>
+          <span key={index}>
             {decodeHTMLEntities(text)}
           </span>
         )

@@ -5,13 +5,14 @@ const { shell } = require('electron').remote
 export default function ExternalLink(props) {
   const href = props.href
 
-  const click = () => {
+  const click = (event) => {
+    event.preventDefault()
     shell.openExternal(href)
   }
 
   return (
-    <button className="link-button" onClick={click} data-href={href}>
+    <a className={props.className} onClick={click} href={href}>
       {props.children}
-    </button>
+    </a>
   )
 }
