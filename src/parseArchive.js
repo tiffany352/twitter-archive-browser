@@ -18,15 +18,25 @@ function loadFile(root, name) {
 }
 
 async function loadDataFile(root, name) {
-  const rawData = await loadFile(root, name + '.js')
-  
-  const string = new TextDecoder('utf-8').decode(rawData)
+  try {
+    const rawData = await loadFile(root, name + '.js')
 
-  const pattern = /^[^=]+ = (.*)$/ms
-  const rest = pattern.exec(string)[1]
-  const decoded = JSON.parse(rest)
+    const string = new TextDecoder('utf-8').decode(rawData)
 
-  return decoded
+    const pattern = /^[^=]+ = (.*)$/ms
+    const rest = pattern.exec(string)[1]
+    const data = JSON.parse(rest)
+
+    return (data[0] && data[0][name]) || data
+  }
+  catch (e) {
+    if (e.code === 'ENOENT') {
+      return null
+    }
+    else {
+      throw e;
+    }
+  }
 }
 
 class MediaProvider {
@@ -35,6 +45,10 @@ class MediaProvider {
   }
 
   async getMediaUrl(tweetId, cdnUrl) {
+    if (!this.zipFile) {
+      return null
+    }
+
     // https://pbs.twimg.com/media/ABCDEFGHJKLMNOP.png
     const pattern = /^https:\/\/pbs\.twimg\.com\/media\/(.*)\.(.*)$/
     const result = cdnUrl.match(pattern)
@@ -65,6 +79,10 @@ class MediaProvider {
   }
 
   async getVideoUrl(tweetId, cdnUrl) {
+    if (!this.zipFile) {
+      return null
+    }
+
     // https://video.twimg.com/ext_tw_video/{tweet id}/pu/vid/624x1230/{filename}.mp4?tag=10
     const pattern = /^https:\/\/video\.twimg\.com\/ext_tw_video\/.*\/pu\/vid\/.*\/(.*)\.([^?]+)(?:\?.*)?$/
     const result = cdnUrl.match(pattern)
@@ -95,6 +113,10 @@ class MediaProvider {
   }
 
   async getGifUrl(tweetId, cdnUrl) {
+    if (!this.zipFile) {
+      return null
+    }
+
     // "https://video.twimg.com/tweet_video/{filename}.mp4"
     const pattern = /^https:\/\/video\.twimg\.com\/tweet_video\/(.*)$/
     const result = cdnUrl.match(pattern)
@@ -117,10 +139,25 @@ class MediaProvider {
 }
 
 async function loadMedia(root) {
-  const zipData = await loadFile(root, 'tweet_media/tweet-media-part1.zip')
-  const zipFile = await JSZip.loadAsync(zipData)
+  try {
+    const zipData = await loadFile(root, 'tweet_media/tweet-media-part1.zip')
+    const zipFile = await JSZip.loadAsync(zipData)
 
-  return new MediaProvider(zipFile)
+    return new MediaProvider(zipFile)
+  }
+  catch (e) {
+    return new MediaProvider(null)
+  }
+}
+
+export class ArchiveLoadError extends Error {
+  constructor(path, archiveType, reason, missingFiles) {
+    super("ArchiveLoadError: " + reason)
+    this.path = path
+    this.archiveType = archiveType
+    this.reason = reason
+    this.missingFiles = missingFiles
+  }
 }
 
 export default async function parseArchive(path) {
@@ -161,6 +198,17 @@ export default async function parseArchive(path) {
     'verified',
   ]
 
+  const stats = await new Promise((resolve, reject) => {
+    fs.lstat(path, (err, stats) => {
+      if (err) {
+        reject(err)
+      }
+      else {
+        resolve(stats)
+      }
+    })
+  })
+
   const list = await Promise.all(dataFiles.map(async (name) => {
     return {
       name,
@@ -170,37 +218,55 @@ export default async function parseArchive(path) {
 
   const map = {}
   for (let entry of list) {
-    console.log(entry)
-    map[entry.name] = (entry.data[0] && entry.data[0][entry.name]) || entry.data
+    map[entry.name] = entry.data
   }
 
-  for (let tweet of map.tweet) {
-    tweet.created_date = new Date(tweet.created_at)
-  }
-
-  map.tweet.sort((a, b) => {
-    return b.created_date - a.created_date
-  })
-
-  map.tweet_media = await loadMedia(path)
-
-  // Cross reference screen name data
-  const screenNames = {}
-
-  for (const tweet of map.tweet) {
-    if (tweet.in_reply_to_user_id && tweet.in_reply_to_screen_name) {
-      screenNames[tweet.in_reply_to_user_id] = tweet.in_reply_to_screen_name
+  if (map.tweet) {
+    for (let tweet of map.tweet) {
+      tweet.created_date = new Date(tweet.created_at)
     }
-    if (tweet.entities.user_mentions) {
-      for (const mention of tweet.entities.user_mentions) {
-        if (mention.id_str && mention.screen_name) {
-          screenNames[mention.id_str] = mention.screen_name
+
+    map.tweet.sort((a, b) => {
+      return b.created_date - a.created_date
+    })
+
+    // Cross reference screen name data
+    const screenNames = {}
+
+    for (const tweet of map.tweet) {
+      if (tweet.in_reply_to_user_id && tweet.in_reply_to_screen_name) {
+        screenNames[tweet.in_reply_to_user_id] = tweet.in_reply_to_screen_name
+      }
+      if (tweet.entities.user_mentions) {
+        for (const mention of tweet.entities.user_mentions) {
+          if (mention.id_str && mention.screen_name) {
+            screenNames[mention.id_str] = mention.screen_name
+          }
         }
       }
     }
+
+    map.screen_names = screenNames
   }
 
-  map.screen_names = screenNames
+  map.tweet_media = await loadMedia(path)
+
+  if (!map.account || !map.tweet) {
+    const missingFiles = []
+    for (const file of dataFiles) {
+      if (map[file] === null) {
+        missingFiles.push(file + '.js')
+      }
+    }
+    throw new ArchiveLoadError(
+      path,
+      stats.isDirectory() ? 'Folder' : 'Zip File',
+      'Critical files missing',
+      missingFiles
+    )
+  }
+
+  console.log('archive data', map)
 
   return map
 }
