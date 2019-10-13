@@ -91,6 +91,25 @@ export default async function parseArchive(path) {
     map.screen_names = screenNames
   }
 
+  if (map['direct-message']) {
+    map.direct_message = map['direct-message'].map((conversation) => {
+      conversation = conversation.dmConversation
+      return {
+        conversationId: conversation.conversationId,
+        messages: conversation.messages.map((message) => {
+          message = message.messageCreate
+
+          const isUnix = /^([0-9]+)$/.test(message.createdAt)
+          message.createdDate = new Date(
+            isUnix ? parseInt(message.createdAt) : message.createdAt
+          )
+
+          return message  
+        })
+      }
+    })
+  }
+
   map.tweet_media = new MediaProvider(await tree.readZip('tweet_media/tweet-media-part1.zip'))
   map.direct_message_media = new MediaProvider(await tree.readZip(
     'direct_message_media/direct-message-media-part1.zip'
