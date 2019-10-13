@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux'
 import './MessagesPage.css'
 
 function parseDate(date) {
-  const asUnix = parseInt(date)
-  if (asUnix) {
-    return new Date(asUnix)
+  const isUnix = /^([0-9]+)$/.test(date)
+  if (isUnix) {
+    return new Date(parseInt(date))
   }
 
   return new Date(date)
