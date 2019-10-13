@@ -17,7 +17,7 @@ export default function PromptArchive(props) {
     try {
       const archive = await parseArchive(path)
       setSession(archive)
-      history.push('/archive/tweets/')
+      history.push('/archive/tweets')
     }
     catch (e) {
       console.log('parseArchive error', e)

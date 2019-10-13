@@ -1,8 +1,9 @@
 import React, { useContext } from 'react'
-import { Route, useHistory, useRouteMatch } from 'react-router'
+import { Route, useHistory } from 'react-router'
 import Message from './Message'
 import SessionContext from './SessionContext'
 import './MessagesPage.css'
+import useQuery from '../useQuery'
 
 function ConversationListItem(props) {
   const { session } = useContext(SessionContext)
@@ -45,15 +46,15 @@ function ConversationList(props) {
 
 function ConversationView(props) {
   const { session: { direct_message } } = useContext(SessionContext)
-  const searchMatch = useRouteMatch("*/search/:term")
+  const query = useQuery()
 
   const convoId = props.match.params.convoId
   const convo = direct_message.find((convo) => convo.conversationId === convoId)
   if (!convo) {
     return null
   }
-  const searchTerm = searchMatch && searchMatch.params.term && decodeURIComponent(searchMatch.params.term)
-  const needle = searchTerm && searchTerm.toLowerCase()
+  const search = query.get('search')
+  const needle = search && search.toLowerCase()
   const messages = convo.messages.slice().reverse().filter((message) => (
     !needle || message.text.toLowerCase().includes(needle)
   ))
@@ -93,7 +94,7 @@ export default function MessagesPage(props) {
         <ConversationList />
       </aside>
       <article className="Session-content">
-        <Route path="/archive/messages/conversation/:convoId/" component={ConversationView} />
+        <Route path="/archive/messages/conversation/:convoId" component={ConversationView} />
       </article>
     </>
   )
