@@ -9,22 +9,53 @@ export default function PromptArchive(props) {
   const dispatch = useDispatch()
   const [ error, setError ] = useState(null)
 
-  const openFile = async () => {
-    const result = await dialog.showOpenDialog({
-      properties: ['openFile', 'openDirectory'],
-    })
-    const path = result.filePaths[0]
+  const loadArchive = async (path) => {
     console.log("archive opened", path)
     try {
       const archive = await parseArchive(path)
-      console.log(archive)
       dispatch({
         type: 'sessionCreate',
         archive
       })
     }
     catch (e) {
+      console.log('parseArchive error', e)
       setError(e)
+    }
+  }
+
+  const openFileOrFolder = async() => {
+    const result = await dialog.showOpenDialog({
+      filters: [
+        { name: 'Zip Files', extensions: ['zip', 'zipx'] },
+        { name: 'All Files', extensions: ['*'] },
+      ],
+      properties: ['openFile', 'openDirectory'],
+    })
+    if (result.filePaths.length > 0) {
+      loadArchive(result.filePaths[0])
+    }
+  }
+
+  const openFile = async () => {
+    const result = await dialog.showOpenDialog({
+      filters: [
+        { name: 'Zip Files', extensions: ['zip', 'zipx'] },
+        { name: 'All Files', extensions: ['*'] },
+      ],
+      properties: ['openFile'],
+    })
+    if (result.filePaths.length > 0) {
+      loadArchive(result.filePaths[0])
+    }
+  }
+
+  const openFolder = async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+    })
+    if (result.filePaths.length > 0) {
+      loadArchive(result.filePaths[0])
     }
   }
 
@@ -36,7 +67,22 @@ export default function PromptArchive(props) {
         </h2>
         <hr />
         <p>
-          Or, you can <button className="PromptArchive-button" onClick={openFile}>open a file</button>
+          <span>You can also </span>
+          {(process.platform === 'darwin' && (
+            <button className="PromptArchive-button" onClick={openFileOrFolder}>
+              browse for a file/folder
+            </button>
+          )) || (
+            <>
+              <button className="PromptArchive-button" onClick={openFile}>
+                browse for a file
+              </button>
+              <span> or </span>
+              <button className="PromptArchive-button" onClick={openFolder}>
+                browse for a folder
+              </button>
+            </>
+          )}
         </p>
         {error instanceof ArchiveLoadError ? (
           <div className="PromptArchive-failReport">
