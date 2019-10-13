@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Html5Entities } from 'html-entities'
 import './MessagesPage.css'
+import Segmenter from '../Segmenter'
+import ExternalLink from './ExternalLink'
+const https = require('https')
 
 function parseDate(date) {
   const isUnix = /^([0-9]+)$/.test(date)
@@ -49,6 +53,50 @@ function ConversationList(props) {
   )
 }
 
+const shortLinkCache = new Map()
+async function resolveShortLink(href) {
+  const cached = shortLinkCache.get(href)
+  if (cached) {
+    return cached
+  }
+
+  console.log('resolveShortLink', href)
+
+  const result = await new Promise((resolve, reject) => {
+    https.get(href, (response) => {
+      const result = response.headers.location || null
+      console.log('resolveShortLink result', result, response)
+      shortLinkCache.set(href, result)
+      resolve(result)
+  
+    }).on('error', (error) => {
+      console.log('resolveShortLink error', error)
+    })
+  })
+  shortLinkCache.set(href, result)
+  return result
+}
+
+// This only exists because DMs don't include entity information.
+function TwitterShortLink(props) {
+  const [ realUrl, setRealUrl ] = useState(null)
+
+  resolveShortLink(props.href).then((realUrl) => {
+    setRealUrl(realUrl)
+  })
+
+  const stickerPattern = /^https:\/\/twitter\.com\/i\/stickers\/image\/([0-9]+)$/
+  if (realUrl && stickerPattern.test(realUrl)) {
+    return (
+      <img src={realUrl} alt="Sticker" />
+    )
+  }
+
+  return (
+    <ExternalLink href={props.href}>{realUrl || props.href}</ExternalLink>
+  )
+}
+
 function ConversationMessage(props) {
   const accountId = useSelector((state) => state.session.account.accountId)
   const message = props.message.messageCreate
@@ -57,9 +105,32 @@ function ConversationMessage(props) {
 
   const date = parseDate(message.createdAt)
 
+  const text = Html5Entities.decode(message.text)
+  const segmenter = new Segmenter(text.length, { style: 'normal' })
+
+  const linkPattern = /https?:\/\/t\.co\/[^\s]*/g
+  for (const match of text.matchAll(linkPattern)) {
+    segmenter.setSpan(match.index, match.index + match[0].length - 1, {
+      style: 'link',
+      href: match[0],
+    })
+  }
+
+  const segments = segmenter.array.map(({ start, end, value }, index) => {
+    const slice = text.slice(start, end+1)
+    switch (value.style) {
+      case 'normal':
+        return <span key={index}>{slice}</span>
+      case 'link':
+        return <TwitterShortLink key={index} href={value.href} />
+      default:
+        return null
+    }
+  })
+
   return (
     <div className="MessagesPage-message" data-isself={isSelf}>
-      <p>{message.text}</p>
+      <p>{segments}</p>
       <div className="MessagesPage-messageDate">{date.toLocaleTimeString()}</div>
     </div>
   )

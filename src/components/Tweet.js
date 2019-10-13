@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
+import { Html5Entities } from 'html-entities'
 import ExternalLink from './ExternalLink'
 import './Tweet.css'
 import Segmenter from '../Segmenter'
@@ -154,32 +155,13 @@ export default function Tweet(props) {
     }
   }
 
-  function decodeHTMLEntities(text) {
-    var entities = [
-        ['amp', '&'],
-        ['apos', '\''],
-        ['#x27', '\''],
-        ['#x2F', '/'],
-        ['#39', '\''],
-        ['#47', '/'],
-        ['lt', '<'],
-        ['gt', '>'],
-        ['quot', '"']
-    ]
-
-    for (var i = 0; i < entities.length; ++i) 
-        text = text.replace(new RegExp('&'+entities[i][0]+';', 'g'), entities[i][1])
-
-    return text
-  }
-
   const formattedText = segmenter.array.map((segment, index) => {
     const text = data.full_text.slice(segment.start, segment.end + 1)
     switch (segment.value.style) {
       case 'normal':
         return (
           <span key={index}>
-            {decodeHTMLEntities(text)}
+            {new Html5Entities().decode(text)}
           </span>
         )
       case 'link':
