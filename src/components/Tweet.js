@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useState, useContext } from 'react'
 import { Html5Entities } from 'html-entities'
 import ExternalLink from './ExternalLink'
-import './Tweet.css'
+import SessionContext from './SessionContext'
 import Segmenter from '../Segmenter'
+import './Tweet.css'
 
 function Media(props) {
   const [ mediaUrl, setMediaUrl ] = useState(null)
-  const mediaProvider = useSelector((state) => state.session.tweet_media)
+  const { session } = useContext(SessionContext)
+  const mediaProvider = session.tweet_media
   const data = props.data
 
   if (data.type === 'photo') {
@@ -76,7 +77,7 @@ const likeIcon = (
 )
 
 export default function Tweet(props) {
-  const account = useSelector((state) => state.session.account)
+  const { session: { account } } = useContext(SessionContext)
 
   const data = props.data
   const url = "https://twitter.com/" + account.username + "/status/" + data.id_str

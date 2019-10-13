@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useState, useContext } from 'react'
 import { Html5Entities } from 'html-entities'
 import ExternalLink from './ExternalLink'
 import Segmenter from '../Segmenter'
 import './Message.css'
+import SessionContext from './SessionContext'
 const https = require('https')
 
 const shortLinkCache = new Map()
@@ -59,7 +59,8 @@ function TwitterShortLink(props) {
 
 function MessageMedia(props) {
   const [ mediaUrl, setMediaUrl ] = useState(null)
-  const mediaProvider = useSelector((state) => state.session.direct_message_media)
+  const { session } = useContext(SessionContext)
+  const mediaProvider = session.direct_message_media
 
   mediaProvider.getDirectMessageMediaUrl(props.url).then((mediaUrl) => {
     setMediaUrl(mediaUrl)
@@ -73,7 +74,7 @@ function MessageMedia(props) {
 }
 
 export default function Message(props) {
-  const accountId = useSelector((state) => state.session.account.accountId)
+  const { session: { account: { accountId }}} = useContext(SessionContext)
   const message = props.message
 
   const isSelf = message.senderId === accountId

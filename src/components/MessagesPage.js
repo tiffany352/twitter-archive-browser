@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useContext } from 'react'
+import { Route, useHistory, useRouteMatch } from 'react-router'
 import Message from './Message'
+import SessionContext from './SessionContext'
 import './MessagesPage.css'
 
 function ConversationListItem(props) {
-  const [ screenNames, accountId ] = useSelector((state) => [
-    state.session.screen_names,
-    state.session.account.accountId
-  ])
+  const { session } = useContext(SessionContext)
+  const history = useHistory()
+  const screenNames = session.screen_names
+  const { accountId } = session.account
   const convo = props.convo
 
   const ids = convo.conversationId.split('-')
@@ -17,7 +18,7 @@ function ConversationListItem(props) {
   return (
     <button
       className="MessagesPage-conversationListItem"
-      onClick={() => props.setCurrentConvo(convo.conversationId)}
+      onClick={() => history.push(`/archive/messages/conversation/${convo.conversationId}/`)}
     >
       <div className="MessagesPage-conversationListItemName">
         {otherName ? otherName : `Unknown sender (${other})`}
@@ -30,23 +31,32 @@ function ConversationListItem(props) {
 }
 
 function ConversationList(props) {
-  const conversations = useSelector((state) => state.session.direct_message)
+  const { session } = useContext(SessionContext)
+  const conversations = session.direct_message
 
   return (
     <div className="MessagesPage-conversationList">
       {conversations.map((convo, index) => (
-        <ConversationListItem setCurrentConvo={props.setCurrentConvo} convo={convo} key={index} />
+        <ConversationListItem convo={convo} key={index} />
       ))}
     </div>
   )
 }
 
 function ConversationView(props) {
-  const messages = useSelector((state) => {
-    const conversations = state.session.direct_message
-    const convo = conversations.find((convo) => convo.conversationId === props.convoId)
-    return convo.messages
-  }).slice().reverse()
+  const { session: { direct_message } } = useContext(SessionContext)
+  const searchMatch = useRouteMatch("*/search/:term")
+
+  const convoId = props.match.params.convoId
+  const convo = direct_message.find((convo) => convo.conversationId === convoId)
+  if (!convo) {
+    return null
+  }
+  const searchTerm = searchMatch && searchMatch.params.term && decodeURIComponent(searchMatch.params.term)
+  const needle = searchTerm && searchTerm.toLowerCase()
+  const messages = convo.messages.slice().reverse().filter((message) => (
+    !needle || message.text.toLowerCase().includes(needle)
+  ))
 
   console.log('messages', messages)
 
@@ -77,17 +87,13 @@ function ConversationView(props) {
 }
 
 export default function MessagesPage(props) {
-  const [ currentConvo, setCurrentConvo ] = useState(null)
-
   return (
     <>
       <aside className="Session-sidebar">
-        <ConversationList setCurrentConvo={setCurrentConvo} />
+        <ConversationList />
       </aside>
       <article className="Session-content">
-        {currentConvo && (
-          <ConversationView convoId={currentConvo} />
-        )}
+        <Route path="/archive/messages/conversation/:convoId/" component={ConversationView} />
       </article>
     </>
   )

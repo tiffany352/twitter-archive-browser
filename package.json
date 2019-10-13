@@ -85,8 +85,7 @@
     "html-entities": "^1.2.1",
     "jszip": "^3.2.2",
     "react-infinite-scroller": "^1.2.4",
-    "react-redux": "^7.1.1",
-    "redux": "^4.0.4",
+    "react-router": "^5.1.2",
     "typescript": "^3.6.3",
     "wait-on": "^3.3.0"
   }

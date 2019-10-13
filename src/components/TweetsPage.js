@@ -1,14 +1,17 @@
-import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useState, useContext } from 'react'
+import { useRouteMatch } from 'react-router'
 import InfiniteScroll from 'react-infinite-scroller'
 import Tweet from './Tweet'
+import SessionContext from './SessionContext'
 
 export default function TweetsPage(props) {
   const [count, setCount] = useState(30)
-  const session = useSelector((state) => state.session)
+  const { session } = useContext(SessionContext)
+  const searchMatch = useRouteMatch("*/search/:term")
+  const searchTerm = searchMatch && searchMatch.params.term && decodeURIComponent(searchMatch.params.term)
 
   const tweets = []
-  const needle = session.search && session.search.toLowerCase()
+  const needle = searchTerm && searchTerm.toLowerCase()
   let hasMore = false
 
   for (const tweet of session.tweet) {

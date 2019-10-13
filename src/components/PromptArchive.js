@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
-import { useDispatch } from "react-redux"
+import React, { useState, useContext } from 'react'
+import { useHistory } from 'react-router'
 import parseArchive, { ArchiveLoadError } from '../parseArchive'
 import './PromptArchive.css'
+import SessionContext from './SessionContext'
 const electron = window.require('electron')
 const { dialog } = electron.remote
 
 export default function PromptArchive(props) {
-  const dispatch = useDispatch()
+  const { setSession } = useContext(SessionContext)
+  const history = useHistory()
   const [ error, setError ] = useState(null)
   const [ dragOver, setDragOver ] = useState(false)
 
@@ -14,10 +16,8 @@ export default function PromptArchive(props) {
     console.log("archive opened", path)
     try {
       const archive = await parseArchive(path)
-      dispatch({
-        type: 'sessionCreate',
-        archive
-      })
+      setSession(archive)
+      history.push('/archive/tweets/')
     }
     catch (e) {
       console.log('parseArchive error', e)

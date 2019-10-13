@@ -1,29 +1,38 @@
-import React from 'react'
+import React, { useState, useContext } from 'react'
 import ReactDOM from 'react-dom'
-import { useSelector } from 'react-redux'
+import { MemoryRouter as Router, Switch, Route } from 'react-router'
 import PromptArchive from './PromptArchive'
 import Session from './Session'
+import SessionContext from './SessionContext'
 import './App.css'
 
 function AppTitle(props) {
-  const accountName = useSelector((state) => state.session != null && state.session.account.username)
+  const { session } = useContext(SessionContext)
+  const accountName = session != null && session.account.username
 
   const title = (
     <title>
       {accountName ? `${accountName} - Twitter Archive Browser` : `Twitter Archive Browser`}
     </title>
   )
-  
+
   return ReactDOM.createPortal(title, document.head)
 }
 
 export default function App(props) {
-  const haveSession = useSelector((state) => state.session != null)
+  const [ session, setSession ] = useState(null)
 
   return (
-    <div className="App">
-      {haveSession ? <Session /> : <PromptArchive />}
-      <AppTitle />
-    </div>
+    <SessionContext.Provider value={{session, setSession}}>
+      <Router initialEntries={["/prompt"]}>
+        <div className="App">
+          <Switch>
+            <Route exact path="/prompt" component={PromptArchive} />
+            <Route path="/archive" component={Session} />
+          </Switch>
+          <AppTitle />
+        </div>
+      </Router>
+    </SessionContext.Provider>
   )
 }
