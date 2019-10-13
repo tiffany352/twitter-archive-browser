@@ -92,8 +92,30 @@ function TwitterShortLink(props) {
     )
   }
 
+  const mediaPattern = /^https:\/\/twitter\.com\/messages\/media\/([0-9]+)$/
+  if (realUrl && mediaPattern.test(realUrl)) {
+    return (
+      <img src={realUrl} alt="Media" />
+    )
+  }
+
   return (
     <ExternalLink href={props.href}>{realUrl || props.href}</ExternalLink>
+  )
+}
+
+function MessageMedia(props) {
+  const [ mediaUrl, setMediaUrl ] = useState(null)
+  const mediaProvider = useSelector((state) => state.session.direct_message_media)
+
+  mediaProvider.getDirectMessageMediaUrl(props.url).then((mediaUrl) => {
+    setMediaUrl(mediaUrl)
+  })
+
+  return (
+    <div className="MessagesPage-media">
+      <img alt="" src={mediaUrl} />
+    </div>
   )
 }
 
@@ -102,8 +124,17 @@ function ConversationMessage(props) {
   const message = props.message.messageCreate
 
   const isSelf = message.senderId === accountId
-
   const date = parseDate(message.createdAt)
+
+  if (message.mediaUrls.length > 0) {
+    console.log('has media urls', message)
+    return (
+      <div className="MessagesPage-message" data-isself={isSelf} data-ismedia="true">
+        {message.mediaUrls.map((url, index) => <MessageMedia key={index} url={url} />)}
+        <div className="MessagesPage-messageDate">{date.toLocaleTimeString()}</div>
+      </div>
+    )
+  }
 
   const text = Html5Entities.decode(message.text)
   const segmenter = new Segmenter(text.length, { style: 'normal' })

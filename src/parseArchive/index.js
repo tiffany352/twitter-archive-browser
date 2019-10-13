@@ -92,6 +92,9 @@ export default async function parseArchive(path) {
   }
 
   map.tweet_media = new MediaProvider(await tree.readZip('tweet_media/tweet-media-part1.zip'))
+  map.direct_message_media = new MediaProvider(await tree.readZip(
+    'direct_message_media/direct-message-media-part1.zip'
+  ))
 
   if (!map.account || !map.tweet) {
     const missingFiles = []

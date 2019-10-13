@@ -33,7 +33,6 @@ export default class MediaProvider {
     const contents = await this.tree.readBase64(filename)
 
     return 'data:' + mimeType + ';base64,' + contents
-
   }
 
   async getMediaUrl(tweetId, cdnUrl) {
@@ -52,5 +51,32 @@ export default class MediaProvider {
     // "https://video.twimg.com/tweet_video/{filename}.mp4"
     const pattern = /^https:\/\/video\.twimg\.com\/tweet_video\/(.*)\.(.*)$/
     return await this.lookup(pattern, tweetId, cdnUrl)
+  }
+
+  async getDirectMessageMediaUrl(cdnUrl) {
+    if (!this.tree) {
+      return null
+    }
+
+    // "https://ton.twitter.com/dm/{media id part 1}/{junk}/{media id part 2}.jpg"
+    const pattern = /^https:\/\/ton\.twitter\.com\/dm\/(.*)\/.*\/(.*)\.(.*)$/
+
+    const result = cdnUrl.match(pattern)
+    if (!result) {
+      console.log('failed to parse: ', cdnUrl)
+      return null
+    }
+
+    const [, name1, name2, extension ] = result
+    const mimeType = mimeTypes[extension]
+    if (!mimeType) {
+      console.log('unknown extension:', extension)
+      return null
+    }
+
+    const filename = `${name1}-${name2}.${extension}`
+    const contents = await this.tree.readBase64(filename)
+
+    return 'data:' + mimeType + ';base64,' + contents
   }
 }
