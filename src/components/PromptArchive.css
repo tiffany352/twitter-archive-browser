@@ -23,7 +23,7 @@
   border: 4px dashed transparent;
 }
 
-.PromptArchive-dialog[data-dragOver="true"] {
+.PromptArchive-dialog[data-dragover="true"] {
   border: 4px dashed rgb(255, 255, 255);
 }
 

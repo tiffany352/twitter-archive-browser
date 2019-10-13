@@ -84,7 +84,7 @@ export default function PromptArchive(props) {
     <div className="PromptArchive-container">
       <div
         className="PromptArchive-dialog"
-        data-dragOver={dragOver}
+        data-dragover={dragOver}
         onDragOver={onDragOver}
         onDragLeave={onDragEnd}
         onDragEnd={onDragEnd}
