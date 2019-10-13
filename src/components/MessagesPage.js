@@ -2,6 +2,15 @@ import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import './MessagesPage.css'
 
+function parseDate(date) {
+  const asUnix = parseInt(date)
+  if (asUnix) {
+    return new Date(asUnix)
+  }
+
+  return new Date(date)
+}
+
 function ConversationListItem(props) {
   const [ screenNames, accountId ] = useSelector((state) => [
     state.session.screen_names,
@@ -22,7 +31,7 @@ function ConversationListItem(props) {
         {otherName ? otherName : `Unknown sender (${other})`}
       </div>
       <div className="MessagesPage-conversationListItemDate">
-        {new Date(convo.dmConversation.messages[0].messageCreate.createdAt).toLocaleDateString()}
+        {parseDate(convo.dmConversation.messages[0] && convo.dmConversation.messages[0].messageCreate.createdAt).toLocaleDateString()}
       </div>
     </button>
   )
@@ -46,7 +55,7 @@ function ConversationMessage(props) {
 
   const isSelf = message.senderId === accountId
 
-  const date = new Date(message.createdAt)
+  const date = parseDate(message.createdAt)
 
   return (
     <div className="MessagesPage-message" data-isself={isSelf}>
@@ -70,7 +79,7 @@ function ConversationView(props) {
     <div className="Session-contentInner">
       <div className="MessagesPage-conversationView">
         {messages.map((message, index) => {
-          const date = new Date(message.messageCreate.createdAt)
+          const date = parseDate(message.messageCreate.createdAt)
           const sameDay = lastMessage === undefined || (
             date.getFullYear() === lastMessage.getFullYear() &&
             date.getMonth() === lastMessage.getMonth() &&

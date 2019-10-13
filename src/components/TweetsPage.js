@@ -12,7 +12,7 @@ export default function TweetsPage(props) {
   let hasMore = false
 
   for (const tweet of session.tweet) {
-    if (props.includeReplies || tweet.in_reply_to_user_id_str === undefined) {
+    if (props.includeReplies || !tweet.in_reply_to_user_id_str) {
       if (!needle || tweet.full_text.toLowerCase().includes(needle)) {
         tweets.push(tweet)
       }
