@@ -15,6 +15,16 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+  padding: 10px;
+  transition-property: border;
+  transition-duration: 0.25s;
+  transition-timing-function: ease;
+  border-radius: 20px;
+  border: 4px dashed transparent;
+}
+
+.PromptArchive-dialog[data-dragOver="true"] {
+  border: 4px dashed rgb(255, 255, 255);
 }
 
 .PromptArchive-dialog > hr {

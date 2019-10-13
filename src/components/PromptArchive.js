@@ -8,6 +8,7 @@ const { dialog } = electron.remote
 export default function PromptArchive(props) {
   const dispatch = useDispatch()
   const [ error, setError ] = useState(null)
+  const [ dragOver, setDragOver ] = useState(false)
 
   const loadArchive = async (path) => {
     console.log("archive opened", path)
@@ -59,9 +60,37 @@ export default function PromptArchive(props) {
     }
   }
 
+  const onDragOver = (event) => {
+    setDragOver(true)
+    event.preventDefault()
+    return false
+  }
+
+  const onDragEnd = () => {
+    setDragOver(false)
+    return false
+  }
+
+  const onDrop = (event) => {
+    event.preventDefault()
+    setDragOver(false)
+
+    if (event.dataTransfer.files.length > 0) {
+      loadArchive(event.dataTransfer.files[0].path)
+    }
+  }
+
   return (
     <div className="PromptArchive-container">
-      <div className="PromptArchive-dialog">
+      <div
+        className="PromptArchive-dialog"
+        data-dragOver={dragOver}
+        onDragOver={onDragOver}
+        onDragLeave={onDragEnd}
+        onDragEnd={onDragEnd}
+        onDragExit={onDragEnd}
+        onDrop={onDrop}
+      >
         <h2>
           Drag your archive zip or folder here to open it.
         </h2>
