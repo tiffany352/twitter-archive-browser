@@ -80,7 +80,7 @@ function ConversationView(props) {
       <div className="MessagesPage-conversationView">
         {messages.map((message, index) => {
           const date = parseDate(message.messageCreate.createdAt)
-          const sameDay = lastMessage === undefined || (
+          const showDate = lastMessage === undefined || !(
             date.getFullYear() === lastMessage.getFullYear() &&
             date.getMonth() === lastMessage.getMonth() &&
             date.getDay() === lastMessage.getDay()
@@ -88,7 +88,7 @@ function ConversationView(props) {
           lastMessage = date
           return (
             <React.Fragment key={index}>
-              {!sameDay && (
+              {showDate && (
                 <hr className="MessagesPage-divider" data-display={date.toLocaleDateString()} />
               )}
               <ConversationMessage message={message} />
