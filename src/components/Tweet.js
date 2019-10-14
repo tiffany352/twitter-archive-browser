@@ -240,7 +240,9 @@ export default function Tweet(props) {
           {likeIcon}
           {data.favorite_count}
         </div>
-        <button onClick={logContents}>Log Contents</button>
+        {(process.env.NODE_ENV || 'development') === 'development' && (
+          <button onClick={logContents}>Log Contents</button>
+        )}
       </footer>
     </div>
   );
