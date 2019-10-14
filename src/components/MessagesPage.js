@@ -2,8 +2,9 @@ import React, { useContext } from 'react'
 import { Route, useHistory } from 'react-router'
 import Message from './Message'
 import SessionContext from './SessionContext'
-import './MessagesPage.css'
+import MediaViewer from './MediaViewer'
 import useQuery from '../useQuery'
+import './MessagesPage.css'
 
 function ConversationListItem(props) {
   const { session } = useContext(SessionContext)
@@ -96,6 +97,7 @@ export default function MessagesPage(props) {
       <article className="Session-content">
         <Route path="/archive/messages/conversation/:convoId" component={ConversationView} />
       </article>
+      <MediaViewer />
     </>
   )
 }

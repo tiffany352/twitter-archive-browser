@@ -1,9 +1,11 @@
 import React, { useState, useContext } from 'react'
+import { useHistory } from 'react-router'
 import { Html5Entities } from 'html-entities'
 import ExternalLink from './ExternalLink'
 import Segmenter from '../Segmenter'
 import './Message.css'
 import SessionContext from './SessionContext'
+import useQuery from '../useQuery'
 const https = require('https')
 
 const shortLinkCache = new Map()
@@ -58,17 +60,26 @@ function TwitterShortLink(props) {
 }
 
 function MessageMedia(props) {
-  const [ mediaUrl, setMediaUrl ] = useState(null)
+  const [ dataUrl, setDataUrl ] = useState(null)
   const { session } = useContext(SessionContext)
+  const query = useQuery()
+  const history = useHistory()
   const mediaProvider = session.direct_message_media
 
-  mediaProvider.getDirectMessageMediaUrl(props.url).then((mediaUrl) => {
-    setMediaUrl(mediaUrl)
+  const url = mediaProvider.getDirectMessageMediaUrl(props.url)
+
+  const openMedia = () => {
+    query.set('media', url)
+    history.push(history.location.pathname + '?' + query.toString())
+  }
+
+  mediaProvider.fetchMedia(url).then((dataUrl) => {
+    setDataUrl(dataUrl)
   })
 
   return (
-    <div className="Message-media">
-      <img alt="" src={mediaUrl} />
+    <div className="Message-media" onClick={openMedia}>
+      <img alt="" src={dataUrl} />
     </div>
   )
 }

@@ -3,6 +3,7 @@ import InfiniteScroll from 'react-infinite-scroller'
 import Tweet from './Tweet'
 import SessionContext from './SessionContext'
 import useQuery from '../useQuery'
+import MediaViewer from './MediaViewer'
 
 export default function TweetsPage(props) {
   const [count, setCount] = useState(30)
@@ -39,6 +40,7 @@ export default function TweetsPage(props) {
         2016
         2015
       </aside>
+      <MediaViewer />
       <article className="Session-content">
         <InfiniteScroll
           pageStart={0}

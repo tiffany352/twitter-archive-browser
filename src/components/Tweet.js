@@ -1,43 +1,58 @@
 import React, { useState, useContext } from 'react'
+import { useHistory } from 'react-router'
 import { Html5Entities } from 'html-entities'
 import ExternalLink from './ExternalLink'
 import SessionContext from './SessionContext'
 import Segmenter from '../Segmenter'
+import useQuery from '../useQuery'
 import './Tweet.css'
 
 function Media(props) {
-  const [ mediaUrl, setMediaUrl ] = useState(null)
+  const [ dataUrl, setDataUrl ] = useState(null)
   const { session } = useContext(SessionContext)
+  const history = useHistory()
+  const query = useQuery()
   const mediaProvider = session.tweet_media
   const data = props.data
 
   if (data.type === 'photo') {
-    mediaProvider.getMediaUrl(props.tweetId, data.media_url_https).then((mediaUrl) => {
-      setMediaUrl(mediaUrl)
+    const url = mediaProvider.getMediaUrl(props.tweetId, data.media_url_https)
+
+    const openMedia = () => {
+      query.set('media', url)
+      history.push(history.location.pathname + '?' + query.toString())
+    }
+  
+    mediaProvider.fetchMedia(url).then((dataUrl) => {
+      setDataUrl(dataUrl)
     })
 
     return (
-      <div className="Tweet-media">
-        <img alt="" src={mediaUrl} />
+      <div className="Tweet-media" onClick={openMedia}>
+        <img alt="" src={dataUrl} />
       </div>
     )
   }
   else if (data.type === 'video') {
-    mediaProvider.getVideoUrl(props.tweetId, data.video_info.variants[3].url).then((mediaUrl) => {
-      setMediaUrl(mediaUrl)
+    const url = mediaProvider.getVideoUrl(props.tweetId, data.video_info.variants[3].url)
+    
+    mediaProvider.fetchMedia(url).then((dataUrl) => {
+      setDataUrl(dataUrl)
     })
 
     return (
       <div className="Tweet-media">
-        <video controls loop src={mediaUrl}>
+        <video controls loop src={dataUrl}>
           Video
         </video>
       </div>
     )
   }
   else if (data.type === 'animated_gif') {
-    mediaProvider.getGifUrl(props.tweetId, data.video_info.variants[0].url).then((mediaUrl) => {
-      setMediaUrl(mediaUrl)
+    const url = mediaProvider.getGifUrl(props.tweetId, data.video_info.variants[0].url)
+    
+    mediaProvider.fetchMedia(url).then((dataUrl) => {
+      setDataUrl(dataUrl)
     })
 
     return (
@@ -45,7 +60,7 @@ function Media(props) {
         <div className="Tweet-gifOverlay">
           GIF
         </div>
-        <video autoPlay loop src={mediaUrl}>
+        <video autoPlay loop src={dataUrl}>
           Video
         </video>
       </div>

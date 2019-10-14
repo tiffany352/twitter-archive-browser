@@ -1,0 +1,27 @@
+.MediaViewer-wrapper {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 50%);
+  z-index: 100;
+}
+
+.MediaViewer-modal {
+  background: rgb(21, 33, 44);
+  padding: 1em;
+  border-radius: 10px;
+  border: 1px solid rgb(56, 68, 77);
+  max-width: 90vw;
+  max-height: 90vh;
+}
+
+.MediaViewer-modal > img {
+  image-rendering: pixelated;
+  max-width: calc(90vw - 2em);
+  max-height: calc(90vh - 2em);
+}

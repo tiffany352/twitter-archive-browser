@@ -78,6 +78,9 @@ export class ZipTree extends FileTree {
 
   async readBase64(filename) {
     const binaryString = await this.readData(filename, 'binarystring')
+    if (!binaryString) {
+      return null
+    }
     const base64 = btoa(binaryString)
 
     return base64
