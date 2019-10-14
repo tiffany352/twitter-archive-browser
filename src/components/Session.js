@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { Switch, Route, useHistory } from 'react-router'
 import TweetsPage from './TweetsPage'
 import MessagesPage from './MessagesPage'
+import AccountPage from './AccountPage'
 import SessionContext from './SessionContext'
 import useQuery from '../useQuery'
 import './Session.css'
@@ -34,6 +35,7 @@ export default function Session(props) {
         <div className="Session-header-item">
           {session.account.username}'s Archive
         </div>
+        <button className="Session-header-item" onClick={() => history.push('/archive/account')}>Account</button>
         <button className="Session-header-item" onClick={() => history.push('/archive/tweets')}>Tweets</button>
         <button className="Session-header-item" onClick={() => history.push('/archive/tweetsAndReplies')}>Tweets & Replies</button>
         <button className="Session-header-item" onClick={() => history.push('/archive/messages')}>Messages</button>
@@ -48,6 +50,7 @@ export default function Session(props) {
         />
       </header>
       <Switch>
+        <Route path="/archive/account" component={AccountPage} />
         <Route path="/archive/tweets" component={TweetsPage} />
         <Route path="/archive/tweetsAndReplies" component={TweetsAndReplies} />
         <Route path="/archive/messages" component={MessagesPage} />
