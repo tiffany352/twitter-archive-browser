@@ -11,6 +11,13 @@ export class ArchiveLoadError extends Error {
   }
 }
 
+function parseDate(date) {
+  const isUnix = /^([0-9]+)$/.test(date)
+  return new Date(
+    isUnix ? parseInt(date) : date
+  )
+}
+
 export default async function parseArchive(path) {
   const dataFiles = [
     'account',
@@ -91,6 +98,10 @@ export default async function parseArchive(path) {
     map.screen_names = screenNames
   }
 
+  if (map.account) {
+    map.account.createdDate = parseDate(map.account.createdAt)
+  }
+
   if (map['direct-message']) {
     map.direct_message = map['direct-message'].map((conversation) => {
       conversation = conversation.dmConversation
@@ -98,11 +109,7 @@ export default async function parseArchive(path) {
         conversationId: conversation.conversationId,
         messages: conversation.messages.map((message) => {
           message = message.messageCreate
-
-          const isUnix = /^([0-9]+)$/.test(message.createdAt)
-          message.createdDate = new Date(
-            isUnix ? parseInt(message.createdAt) : message.createdAt
-          )
+          message.createdDate = parseDate(message.createdAt)
 
           return message  
         })

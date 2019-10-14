@@ -72,6 +72,10 @@ export default class MediaProvider {
   }
 
   async fetchMedia(filename) {
+    if (!this.tree) {
+      return null
+    }
+
     const extension = filename.match(/^.*\.(.*)$/)[1]
     const mimeType = mimeTypes[extension]
     if (!mimeType) {
