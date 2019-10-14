@@ -10,6 +10,8 @@ const https = require('https')
 
 const shortLinkCache = new Map()
 async function resolveShortLink(href) {
+  href = href.replace('http://', 'https://')
+
   const cached = shortLinkCache.get(href)
   if (cached) {
     return cached

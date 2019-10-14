@@ -26,7 +26,9 @@ function ConversationListItem(props) {
         {otherName ? otherName : `Unknown sender (${other})`}
       </div>
       <div className="MessagesPage-conversationListItemDate">
-        {(convo.messages[0] && convo.messages[0].createdDate).toLocaleDateString()}
+        {convo.messages[0] &&
+          convo.messages[0].createdDate &&
+          convo.messages[0].createdDate.toLocaleDateString()}
       </div>
     </button>
   )
