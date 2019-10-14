@@ -234,11 +234,11 @@ export default function Tweet(props) {
       <footer className="Tweet-footer">
         <div className="Tweet-footerItem">
           {retweetIcon}
-          {data.retweet_count}
+          {parseInt(data.retweet_count)}
         </div>
         <div className="Tweet-footerItem">
           {likeIcon}
-          {data.favorite_count}
+          {parseInt(data.favorite_count)}
         </div>
         {(process.env.NODE_ENV || 'development') === 'development' && (
           <button onClick={logContents}>Log Contents</button>
