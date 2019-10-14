@@ -54,6 +54,7 @@
 
 .Session-sidebar {
   grid-area: sidebar;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 

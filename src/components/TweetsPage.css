@@ -1,0 +1,30 @@
+.TweetsPage-week {
+  position: relative;
+  width: 50%;
+  height: 2px;
+  padding-top: 1px;
+}
+
+.TweetsPage-week:hover {
+  background: rgb(13, 80, 122);
+}
+
+.TweetsPage-week:hover > .TweetsPage-weekCount {
+  background: rgb(27, 149, 224);
+}
+
+.TweetsPage-week:hover::after {
+  position: absolute;
+  left: 100%;
+  width: 100%;
+  top: -1em;
+  content: attr(data-date);
+  font-size: 0.8em;
+  padding: 0.5em;
+  pointer-events: none;
+}
+
+.TweetsPage-weekCount {
+  background: rgb(47, 66, 82);
+  height: 100%;
+}
