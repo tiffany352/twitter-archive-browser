@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { useHistory } from 'react-router'
 import { Html5Entities } from 'html-entities'
+import isDev from 'electron-is-dev'
 import ExternalLink from './ExternalLink'
 import SessionContext from './SessionContext'
 import Segmenter from '../Segmenter'
@@ -240,7 +241,7 @@ export default function Tweet(props) {
           {likeIcon}
           {parseInt(data.favorite_count)}
         </div>
-        {(process.env.NODE_ENV || 'development') === 'development' && (
+        {isDev && (
           <button onClick={logContents}>Log Contents</button>
         )}
       </footer>
