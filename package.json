@@ -33,6 +33,7 @@
     },
     "files": [
       "build/**/*",
+      "assets/**/*",
       "node_modules/**/*"
     ],
     "directories": {
@@ -50,7 +51,7 @@
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "npm run-script build",
     "electron-pack": "electron-builder build -wl",
-    "electron-local-pack": "electron-builder build",
+    "electron-local-pack": "electron-builder build --dir",
     "publish": "electron-builder build -wl -p always"
   },
   "eslintConfig": {
