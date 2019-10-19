@@ -31,6 +31,11 @@
       "publisher": "CN=04522D8E-FC63-48F3-B67D-DFFDD2DA82F9",
       "publisherDisplayName": "Tiffany Bennett"
     },
+    "linux": {
+      "target": [
+        "AppImage"
+      ]
+    },
     "files": [
       "build/**/*",
       "assets/**/*",
@@ -50,9 +55,9 @@
     "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "postinstall": "electron-builder install-app-deps",
     "preelectron-pack": "npm run-script build",
-    "electron-pack": "electron-builder build -wl",
+    "electron-pack": "electron-builder build",
     "electron-local-pack": "electron-builder build --dir",
-    "publish": "electron-builder build -wl -p always"
+    "publish": "electron-builder build -p always"
   },
   "eslintConfig": {
     "extends": "react-app"
