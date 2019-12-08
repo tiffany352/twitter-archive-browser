@@ -104,6 +104,9 @@ export class FsTree extends FileTree {
       if (e.code === 'ENOENT') {
         return null
       }
+      if (e.name === 'RangeError') {
+        return null
+      }
       throw e
     }
   }
