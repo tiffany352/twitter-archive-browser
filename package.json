@@ -1,6 +1,6 @@
 {
   "name": "twitter-archive-browser",
-  "version": "0.1.0-alpha4",
+  "version": "0.1.0-alpha5",
   "description": "A desktop app for browsing your Twitter archive.",
   "private": true,
   "author": {
