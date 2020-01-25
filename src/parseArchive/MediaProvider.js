@@ -85,6 +85,7 @@ export default class MediaProvider {
 
     const contents = await this.tree.readBase64(filename)
     if (!contents) {
+      console.log('missing media', filename)
       return null
     }
     return 'data:' + mimeType + ';base64,' + contents

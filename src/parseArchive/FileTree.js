@@ -44,7 +44,8 @@ export default class FileTree {
       return null
     }
     const view = new Uint8Array(buffer)
-    const string = view.map((byte) => String.fromCharCode(byte)).join('')
+    const array = Array.from(view).map((byte) => String.fromCharCode(byte))
+    const string = array.join('')
     const contentsBase64 = btoa(string)
 
     return contentsBase64
@@ -61,6 +62,7 @@ export default class FileTree {
 }
 
 export class ZipTree extends FileTree {
+
   constructor(zip) {
     super()
     this.zip = zip
@@ -84,6 +86,10 @@ export class ZipTree extends FileTree {
     const base64 = btoa(binaryString)
 
     return base64
+  }
+
+  readDir(prefix) {
+    return new ZipTree(this.zip.folder(prefix))
   }
 }
 
@@ -109,5 +115,9 @@ export class FsTree extends FileTree {
       }
       throw e
     }
+  }
+
+  readDir(prefix) {
+    return new FsTree(this.path + '/' + prefix)
   }
 }

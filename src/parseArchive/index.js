@@ -67,10 +67,11 @@ export default async function parseArchive(path) {
 
   const map = {}
   for (let entry of list) {
-    map[entry.name] = (entry.data && entry.data[0] && entry.data[0][entry.name]) || entry.data
+    map[entry.name] = (entry.data && entry.data.length === 1 && entry.data[0][entry.name]) || entry.data
   }
 
   if (map.tweet) {
+    map.tweet = map.tweet.map((data) => data.tweet || data)
     for (let tweet of map.tweet) {
       tweet.created_date = new Date(tweet.created_at)
     }
@@ -117,10 +118,10 @@ export default async function parseArchive(path) {
     })
   }
 
-  map.tweet_media = new MediaProvider(await tree.readZip('tweet_media/tweet-media-part1.zip'))
+  map.tweet_media = new MediaProvider(await tree.readZip('tweet_media/tweet-media-part1.zip') || tree.readDir('tweet_media'))
   map.direct_message_media = new MediaProvider(await tree.readZip(
     'direct_message_media/direct-message-media-part1.zip'
-  ))
+  ) || tree.readDir('direct_message_media'))
 
   if (!map.account || !map.tweet) {
     const missingFiles = []
